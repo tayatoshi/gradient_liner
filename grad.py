@@ -53,9 +53,9 @@ class Gradient(object):
             partial = np.zeros(self.X.shape[1]).reshape(self.X.shape[1],1)
             partial[d] = self.diff
             diff_beta[d,0] = (self.residuals(self.estimation(c_hat, beta_hat+partial)) - self.residuals(self.estimation(c_hat, beta_hat)))/self.diff
-        return({'c' : diff_c, 'beta' : diff_beta})
+        return {'c' : diff_c, 'beta' : diff_beta}
 
-    def fit(self,method = 0, Iter = 100000):
+    def fit(self,method = 0, Iter = 10**5):
         """
         start optimize
         method: 0 is OLS, 1 is MLE
@@ -75,8 +75,9 @@ class Gradient(object):
                 c_hat_a = c_hat_b - self.eta * Diff['c']
                 beta_hat_a= beta_hat_b - self.eta * Diff['beta']
                 NUM = NUM + 1
-                if NUM < 50:
-                    print('time',NUM,' beta{},c{}'.format(beta_hat_a,c_hat_a))
+                plt.scatter(NUM,c_hat_a,s=5,color='red')
+                # if NUM < 50:
+                #     print('time',NUM,' beta{},c{}'.format(beta_hat_a,c_hat_a))
                 if NUM % 1000 == 0:
                     print('time',NUM,' beta{},c{}'.format(beta_hat_a,c_hat_a))
                 if c_hat_a==c_hat_b and (beta_hat_a==beta_hat_b).sum()==self.X.shape[1]:
@@ -86,7 +87,7 @@ class Gradient(object):
             print('1')
         else:
             print('ERROR : method is 0 or 1')
-        return({'c':c_hat_a, 'beta':beta_hat_a})
+        return {'c':c_hat_a, 'beta':beta_hat_a}
 
 X = np.random.normal(0,1,[200,3]).reshape(200,3)
 error = np.random.normal(0,1,200).reshape(200,1)
@@ -100,4 +101,4 @@ model = Gradient(X,Y,0.00001)
 result = model.fit()
 
 print('c:{}\nbeta:{}'.format(result['c'],result['beta']))
-
+plt.show()
